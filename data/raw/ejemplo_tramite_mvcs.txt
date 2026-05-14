@@ -1,0 +1,9 @@
+Trámite: Solicitud de constancia de registro MVCS
+Entidad: Ministerio de Vivienda, Construcción y Saneamiento (MVCS)
+Canal: Mesa de partes virtual
+Requisitos:
+1. DNI del solicitante.
+2. Formulario de solicitud firmado.
+Plazo de atención: 5 días hábiles.
+Costo: Gratuito.
+Fuente: Documento de ejemplo para pruebas del chatbot.
