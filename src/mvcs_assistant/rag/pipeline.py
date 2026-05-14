@@ -1,5 +1,5 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 from mvcs_assistant.config.settings import settings
 from mvcs_assistant.prompts.templates import SYSTEM_PROMPT, USER_PROMPT_TEMPLATE
 from mvcs_assistant.rag.vectorstore import get_vectorstore
