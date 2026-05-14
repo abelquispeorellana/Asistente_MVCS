@@ -16,13 +16,12 @@ class GeminiV1Embeddings(Embeddings):
             f"https://generativelanguage.googleapis.com/v1beta/models/{model}:embedContent"
         )
 
-    def _embed(self, text: str, task_type: str = "retrieval_document") -> List[float]:
+    def _embed(self, text: str, task_type: str = "RETRIEVAL_DOCUMENT") -> List[float]:
         resp = requests.post(
             self._url,
             params={"key": self.api_key},
             headers={"Content-Type": "application/json"},
             json={
-                "model": f"models/{self.model}",
                 "content": {"parts": [{"text": text}]},
                 "taskType": task_type,
             },
@@ -33,10 +32,10 @@ class GeminiV1Embeddings(Embeddings):
         return resp.json()["embedding"]["values"]
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        return [self._embed(t, "retrieval_document") for t in texts]
+        return [self._embed(t, "RETRIEVAL_DOCUMENT") for t in texts]
 
     def embed_query(self, text: str) -> List[float]:
-        return self._embed(text, "retrieval_query")
+        return self._embed(text, "RETRIEVAL_QUERY")
 
 
 def get_embeddings() -> GeminiV1Embeddings:
