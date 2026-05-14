@@ -13,7 +13,7 @@ class GeminiV1Embeddings(Embeddings):
         self.api_key = api_key
         self.model = model
         self._url = (
-            f"https://generativelanguage.googleapis.com/v1/models/{model}:embedContent"
+            f"https://generativelanguage.googleapis.com/v1beta/models/{model}:embedContent"
         )
 
     def _embed(self, text: str, task_type: str = "retrieval_document") -> List[float]:
