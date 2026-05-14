@@ -19,7 +19,8 @@ class GeminiV1Embeddings(Embeddings):
     def _embed(self, text: str, task_type: str = "retrieval_document") -> List[float]:
         resp = requests.post(
             self._url,
-            headers={"x-goog-api-key": self.api_key, "Content-Type": "application/json"},
+            params={"key": self.api_key},
+            headers={"Content-Type": "application/json"},
             json={
                 "model": f"models/{self.model}",
                 "content": {"parts": [{"text": text}]},
@@ -27,7 +28,8 @@ class GeminiV1Embeddings(Embeddings):
             },
             timeout=30,
         )
-        resp.raise_for_status()
+        if not resp.ok:
+            raise RuntimeError(f"Embedding API {resp.status_code}: {resp.text}")
         return resp.json()["embedding"]["values"]
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
