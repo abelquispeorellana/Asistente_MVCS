@@ -1,46 +1,12 @@
-from typing import List
-
-import requests
-from langchain_core.embeddings import Embeddings
+from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain_community.vectorstores import Chroma
 from mvcs_assistant.config.settings import settings
 
-
-class GeminiV1Embeddings(Embeddings):
-    """Llama directamente al endpoint v1 (no v1beta) de la Generative Language API."""
-
-    def __init__(self, api_key: str, model: str = "text-embedding-004"):
-        self.api_key = api_key
-        self.model = model
-        self._url = (
-            f"https://generativelanguage.googleapis.com/v1beta/models/{model}:embedContent"
-        )
-
-    def _embed(self, text: str, task_type: str = "RETRIEVAL_DOCUMENT") -> List[float]:
-        resp = requests.post(
-            self._url,
-            params={"key": self.api_key},
-            headers={"Content-Type": "application/json"},
-            json={
-                "content": {"parts": [{"text": text}]},
-                "taskType": task_type,
-            },
-            timeout=30,
-        )
-        if not resp.ok:
-            raise RuntimeError(f"Embedding API {resp.status_code}: {resp.text}")
-        return resp.json()["embedding"]["values"]
-
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        return [self._embed(t, "RETRIEVAL_DOCUMENT") for t in texts]
-
-    def embed_query(self, text: str) -> List[float]:
-        return self._embed(text, "RETRIEVAL_QUERY")
+_EMBED_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
 
-def get_embeddings() -> GeminiV1Embeddings:
-    model = settings.embedding_model.removeprefix("models/")
-    return GeminiV1Embeddings(api_key=settings.google_api_key, model=model)
+def get_embeddings() -> FastEmbedEmbeddings:
+    return FastEmbedEmbeddings(model_name=_EMBED_MODEL)
 
 
 def get_vectorstore(collection_name: str = "mvcs_docs") -> Chroma:
