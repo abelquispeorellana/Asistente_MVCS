@@ -5,6 +5,7 @@ langchain-community>=0.3.0
 langchain-google-genai>=2.0.0
 langchain-text-splitters>=0.3.0
 chromadb>=0.5.5
+pysqlite3-binary
 protobuf>=3.20.0,<5.0.0
 pypdf>=4.2.0
 beautifulsoup4>=4.12.3
