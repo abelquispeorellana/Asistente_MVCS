@@ -2,7 +2,7 @@ from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain_community.vectorstores import Chroma
 from mvcs_assistant.config.settings import settings
 
-_EMBED_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+_EMBED_MODEL = "BAAI/bge-small-en-v1.5"
 
 
 def get_embeddings() -> FastEmbedEmbeddings:
