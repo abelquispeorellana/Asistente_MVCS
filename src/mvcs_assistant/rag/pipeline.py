@@ -1,3 +1,4 @@
+import time
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from mvcs_assistant.config.settings import settings
@@ -14,24 +15,42 @@ def build_context_with_scores(results: list[tuple]) -> str:
     return "\n\n".join(lines)
 
 
+def _call_llm_with_retry(chain, payload: dict, max_retries: int = 3) -> object:
+    for attempt in range(max_retries):
+        try:
+            return chain.invoke(payload)
+        except Exception as e:
+            msg = str(e)
+            if "429" in msg or "RESOURCE_EXHAUSTED" in msg:
+                wait = 30 * (attempt + 1)
+                time.sleep(wait)
+            else:
+                raise
+    raise RuntimeError("Límite de solicitudes de la API alcanzado. Intenta en unos minutos.")
+
+
 def ask_rag(question: str) -> dict:
     vs = get_vectorstore()
     retriever_results = vs.similarity_search_with_relevance_scores(question, k=settings.k_retrieval)
 
     if not retriever_results or max(score for _, score in retriever_results) < settings.score_threshold:
         return {
-            "answer": "No tengo evidencia suficiente en las fuentes cargadas",
+            "answer": "No tengo evidencia suficiente en las fuentes cargadas para responder esta consulta.",
             "sources": [],
         }
 
     context = build_context_with_scores(retriever_results)
-    llm = ChatGoogleGenerativeAI(model=settings.gemini_model, google_api_key=settings.google_api_key, temperature=0)
+    llm = ChatGoogleGenerativeAI(
+        model=settings.gemini_model,
+        google_api_key=settings.google_api_key,
+        temperature=0,
+    )
     prompt = ChatPromptTemplate.from_messages([
         ("system", SYSTEM_PROMPT),
         ("human", USER_PROMPT_TEMPLATE),
     ])
     chain = prompt | llm
-    response = chain.invoke({"question": question, "context": context})
+    response = _call_llm_with_retry(chain, {"question": question, "context": context})
 
     sources = [
         {
