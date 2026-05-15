@@ -50,7 +50,7 @@ with st.sidebar:
     st.caption("Haz clic para usar como pregunta:")
     for ej in EJEMPLOS:
         if st.button(ej, use_container_width=True):
-            st.session_state["_ejemplo"] = ej
+            st.session_state["question_input"] = ej
     st.divider()
     st.info("Fuentes cargadas:\n- TUPA MVCS (105 págs.)\n- Ejemplo de trámite")
 
@@ -58,12 +58,10 @@ with st.sidebar:
 if "history" not in st.session_state:
     st.session_state.history = []
 
-pregunta_default = st.session_state.pop("_ejemplo", "") if "_ejemplo" in st.session_state else ""
-
 question = st.text_input(
     "Escribe tu pregunta",
-    value=pregunta_default,
     placeholder="Ejemplo: ¿Qué requisitos necesito para obtener una licencia de construcción?",
+    key="question_input",
 )
 
 if st.button("Consultar", type="primary") and question:
