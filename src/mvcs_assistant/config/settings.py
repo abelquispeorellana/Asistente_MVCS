@@ -12,7 +12,7 @@ class Settings:
     gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-1.5-pro")
     embedding_model: str = os.getenv("GEMINI_EMBEDDING_MODEL", "models/text-embedding-004")
     chroma_dir: Path = Path(os.getenv("CHROMA_DIR", "./data/chroma"))
-    raw_data_dir: Path = Path(os.getenv("RAW_DATA_DIR", "./data/raw"))
+    raw_data_dir: Path = Path(os.getenv("RAW_DATA_DIR", "./data"))
     processed_data_dir: Path = Path(os.getenv("PROCESSED_DATA_DIR", "./data/processed"))
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
     chunk_size: int = 1200
